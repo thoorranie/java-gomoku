@@ -1,34 +1,37 @@
 package com.yourssu.model;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class GomokuBoard implements Board {
     public static final int SIZE = 15;
-    private final Map<Coordinate, Piece> grid = new HashMap<>();
+    private final Piece[][] grid = new Piece[SIZE][SIZE];
+    private int pieceCount = 0;
+
+    public GomokuBoard() {
+        for (int i = 0; i < SIZE; i++) {
+            for (int j = 0; j < SIZE; j++) {
+                grid[i][j] = Piece.EMPTY;
+            }
+        }
+    }
 
     @Override
     public Piece getPiece(int row, int column) {
-        Coordinate coordinate = new Coordinate(row, column);
-        return grid.getOrDefault(coordinate, Piece.EMPTY);
+        return grid[row][column];
     }
 
     @Override
     public void placePiece(int row, int column, Piece piece) {
-        Coordinate coordinate = new Coordinate(row, column);
-        validateEmpty(coordinate);
-        grid.put(coordinate, piece);
+        validateEmpty(row, column);
+        grid[row][column] = piece;
+        pieceCount++;
     }
 
-    private void validateEmpty(Coordinate coordinate) {
-        if (grid.containsKey(coordinate)) {
-            throw new IllegalArgumentException();
+    private void validateEmpty(int row, int column) {
+        if (grid[row][column] != Piece.EMPTY) {
+            throw new IllegalArgumentException("이미 돌이 놓여 있는 자리입니다.");
         }
     }
 
     public boolean isFull() {
-        int currentSize = grid.size();
-        int maxSize = SIZE * SIZE;
-        return currentSize == maxSize;
+        return pieceCount == (SIZE * SIZE);
     }
 }
